@@ -3,7 +3,6 @@
 - [Basics - Part 1](#basics---part-1)
   - [1. Variables](#1-variables)
   - [2. Data Types](#2-data-types)
-  - [3. Type Conversion and Operations](#3-type-conversion-and-operations)
   - [4. Strings](#4-strings)
   - [5. Numbers and Math](#5-numbers-and-math)
   - [6. Dates](#6-dates)
@@ -13,12 +12,27 @@
 - [Basics - Part 3](#basics---part-3)
   - [1. Functions](#1-functions)
   - [2. Scopes in Functions](#2-scopes-in-functions)
+    - [`let` vs `var`](#let-vs-var)
+    - [Scoping Rules](#scoping-rules)
+    - [Hoisting](#hoisting)
+    - [Closure and Lexical Scope](#closure-and-lexical-scope)
   - [3. Arrow Functions](#3-arrow-functions)
   - [4. Immediately Invoked Function Expressions (IIFE)](#4-immediately-invoked-function-expressions-iife)
 - [How JS Works](#how-js-works)
 - [Call Stack](#call-stack)
 - [Loops and Iteration](#loops-and-iteration)
   - [ES6 Array Methods](#es6-array-methods)
+- [DOM (Document Object Model)](#dom-document-object-model)
+- [Events](#events)
+- [Async Code](#async-code)
+- [JavaScript Timers](#javascript-timers)
+- [Promises](#promises)
+- [Object-Oriented Programming (OOP)](#object-oriented-programming-oop)
+  - [Prototypes](#prototypes-1)
+  - [The `new` keyword](#the-new-keyword)
+  - [Prototypes and Inheritance](#prototypes-and-inheritance)
+- [`call` and `bind` Methods](#call-and-bind-methods)
+- [Advanced Object Properties](#advanced-object-properties)
 - [Additional Resources](#additional-resources)
 
 ## Basics - Part 1
@@ -1702,38 +1716,6 @@ document.querySelector("#images").addEventListener("click", function (e) {
 document.getElementById("google").addEventListener("click", function (e) {
   e.preventDefault(); // Prevents the default action (navigating to Google)
   console.log("Google link clicked, but navigation prevented.");
-});
-```
-
----
-
-#### 5. **Timers:**
-
-**Example: Using `setTimeout`**
-
-```javascript
-const changeText = function () {
-  document.querySelector("h1").innerHTML = "Best JS series"; // Changes the heading text
-};
-const changeMe = setTimeout(changeText, 2000); // Executes changeText after 2 seconds
-
-document.querySelector("#stop").addEventListener("click", function () {
-  clearTimeout(changeMe); // Stops the timeout if the button is clicked before 2 seconds
-  console.log("Timeout stopped");
-});
-```
-
-**Example: Using `setInterval`**
-
-```javascript
-const sayDate = function () {
-  console.log("Current time:", Date.now()); // Logs the current time every second
-};
-const intervalId = setInterval(sayDate, 1000); // Executes sayDate every second
-
-document.querySelector("#stop").addEventListener("click", function () {
-  clearInterval(intervalId); // Stops the interval when the button is clicked
-  console.log("Interval stopped");
 });
 ```
 
