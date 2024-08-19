@@ -462,7 +462,7 @@ DOCS: [useEffect Docs](https://react.dev/reference/react/useEffect)
 
 ---
 
-###`useCallback` Hook
+### `useCallback` Hook
 
 ##### **What is `useCallback`?**
 
@@ -518,3 +518,457 @@ DOCS: [useEffect Docs](https://react.dev/reference/react/useEffect)
 DOCS: [useCallback](https://react.dev/reference/react/useCallback)
 
 ---
+
+### Custom Hooks in React
+
+**Custom Hooks** are JavaScript functions that allow you to encapsulate and reuse logic across multiple components in a React application.
+
+#### **How to Create a Custom Hook**
+
+A custom hook is just a function that starts with `use` (a convention React uses to identify hooks). It can use other hooks inside of it to manage state, side effects, etc.
+
+**Example: A Custom Hook for Fetching Data**
+
+Here’s how you might create a custom hook to fetch data from an API:
+
+```javascript
+import { useState, useEffect } from "react";
+
+function useFetch(url) {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error("Failed to fetch");
+        }
+        const result = await response.json();
+        setData(result);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [url]);
+
+  return { data, loading, error };
+}
+```
+
+**Using the Custom Hook in a Component:**
+
+```javascript
+function App() {
+  const { data, loading, error } = useFetch("https://api.example.com/data");
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
+
+  return (
+    <div>
+      <h1>Fetched Data:</h1>
+      <pre>{JSON.stringify(data, null, 2)}</pre>
+    </div>
+  );
+}
+```
+
+---
+
+### React Router DOM
+
+#### **What is React Router DOM?**
+
+- **React Router DOM** is a standard library for routing in React applications. It enables navigation between different components, updates the URL, and keeps the UI in sync with the URL, allowing the creation of single-page applications (SPAs) without reloading the entire page.
+
+#### **Core Concepts**
+
+1. **RouterProvider:**
+
+   - The `RouterProvider` component is the core of React Router DOM, wrapping your entire application to enable routing functionalities.
+
+   ```javascript
+   import { RouterProvider } from "react-router-dom";
+
+   function App() {
+     return (
+       <RouterProvider router={router}>
+         {/* Application Components */}
+       </RouterProvider>
+     );
+   }
+   ```
+
+2. **Routes and Route:**
+
+   - The `Route` component defines a path and the component that should render when the URL matches that path. Routes can be nested, enabling complex layouts.
+
+   ```javascript
+   import { Route, createRoutesFromElements } from "react-router-dom";
+
+   const router = createBrowserRouter(
+     createRoutesFromElements(
+       <Route path="/" element={<Layout />}>
+         <Route path="about" element={<About />} />
+         <Route path="contact" element={<Contact />} />
+       </Route>
+     )
+   );
+   ```
+
+3. **Link:**
+
+   - The `Link` component enables client-side navigation without reloading the page, similar to an HTML `<a>` tag but optimized for SPAs.
+
+   ```javascript
+   import { Link } from "react-router-dom";
+
+   function Navbar() {
+     return (
+       <nav>
+         <Link to="/">Home</Link>
+         <Link to="/about">About</Link>
+         <Link to="/contact">Contact</Link>
+       </nav>
+     );
+   }
+   ```
+
+4. **Navigate:**
+
+   - The `Navigate` component is used to programmatically redirect the user to a different route, often used after certain actions, such as form submission.
+
+   ```javascript
+   import { Navigate } from "react-router-dom";
+
+   function Login() {
+     const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+     if (isLoggedIn) {
+       return <Navigate to="/dashboard" />;
+     }
+
+     return (
+       <div>
+         <h2>Login Page</h2>
+         <button onClick={() => setIsLoggedIn(true)}>Log In</button>
+       </div>
+     );
+   }
+   ```
+
+5. **useParams:**
+
+   - The `useParams` hook retrieves dynamic parameters from the URL, which is useful in routes like `/user/:id`.
+
+   ```javascript
+   import { useParams } from "react-router-dom";
+
+   function UserProfile() {
+     const { id } = useParams();
+
+     return (
+       <div>
+         <h2>User Profile</h2>
+         <p>User ID: {id}</p>
+       </div>
+     );
+   }
+   ```
+
+6. **useNavigate:**
+
+   - The `useNavigate` hook programmatically navigates to different routes, offering more flexibility than the `Navigate` component.
+
+   ```javascript
+   import { useNavigate } from "react-router-dom";
+
+   function Dashboard() {
+     const navigate = useNavigate();
+
+     const goToProfile = () => {
+       navigate("/profile");
+     };
+
+     return (
+       <div>
+         <h2>Dashboard</h2>
+         <button onClick={goToProfile}>Go to Profile</button>
+       </div>
+     );
+   }
+   ```
+
+7. **Outlet:**
+
+   - The `Outlet` component renders matched child routes in a layout component, enabling nested routing.
+
+   ```javascript
+   import { Outlet } from "react-router-dom";
+
+   function Layout() {
+     return (
+       <div>
+         <h2>App Layout</h2>
+         <Outlet /> {/* Child route will render here */}
+       </div>
+     );
+   }
+   ```
+
+8. **NavLink**
+   - **NavLink** is a special type of `Link` component in React Router DOM that provides additional styling capabilities based on the active state of the link.
+   - It is used to create navigation links that automatically apply an "active" class or styles when the link matches the current URL.
+
+#### **Using NavLink**
+
+```javascript
+<NavLink
+  to="/dashboard"
+  style={({ isActive }) => ({
+    fontWeight: isActive ? "bold" : "normal",
+    color: isActive ? "blue" : "black",
+  })}
+>
+  Dashboard
+</NavLink>
+```
+
+---
+
+### React Context API
+
+- The **Context API** is a feature in React that allows you to share data across the component tree without passing props down manually at every level.
+- It's primarily used to manage global state or data that needs to be accessible by multiple components, like user authentication, themes, or settings.
+
+#### **Why Use the Context API?**
+
+- **Avoid Prop Drilling:** The Context API helps prevent "prop drilling," where props are passed through many intermediate components just to reach a deeply nested child component.
+- **Global State Management:** It is ideal for managing global state or data that needs to be accessed by various parts of the application.
+- **Simpler State Management:** For simple state management needs, the Context API can be a more straightforward alternative to more complex state management libraries like Redux.
+
+#### **Core Concepts**
+
+1.  **Creating Context:**
+
+    - **Create Context**: This creates a new context object that will be used to pass data through the component tree.
+    - **Create Provider**: The provider component allows consuming components to subscribe to context changes.
+    - **Create Custom Hook**: A custom hook like useTheme() is a convenient way to access the context value.
+
+    ```javascript
+    import { createContext, useContext } from "react";
+    export const ThemeContext = createContext({
+      themeMode: "light", // Default value
+      darkTheme: () => {}, // Placeholder function
+      lightTheme: () => {}, // Placeholder function
+    });
+
+    export const ThemeProvider = ThemeContext.Provider;
+
+    export default function useTheme() {
+      return useContext(ThemeContext); // Custom hook to use the context
+    }
+    ```
+
+    - Explanation:
+
+      - `createContext` creates a context with default values.
+      - `ThemeProvider` is a wrapper component that makes the context data available to any child component.
+      - `useTheme` is a custom hook that simplifies access to the context values.
+
+2.  **Component:**
+
+- App Component
+
+```javascript
+import { useEffect, useState } from "react";
+import "./App.css";
+import { ThemeProvider } from "./contexts/theme";
+import ThemeBtn from "./components/ThemeBtn";
+import Card from "./components/Card";
+
+function App() {
+  const [themeMode, setThemeMode] = useState("light");
+
+  const lightTheme = () => {
+    setThemeMode("light");
+  };
+
+  const darkTheme = () => {
+    setThemeMode("dark");
+  };
+
+  // actual change in theme
+
+  useEffect(() => {
+    document.querySelector("html").classList.remove("light", "dark");
+    document.querySelector("html").classList.add(themeMode);
+  }, [themeMode]);
+
+  return (
+    <ThemeProvider value={{ themeMode, lightTheme, darkTheme }}>
+      <div className="flex flex-wrap min-h-screen items-center">
+        <div className="w-full">
+          <div className="w-full max-w-sm mx-auto flex justify-end mb-4">
+            <ThemeBtn />
+          </div>
+
+          <div className="w-full max-w-sm mx-auto">
+            <Card />
+          </div>
+        </div>
+      </div>
+    </ThemeProvider>
+  );
+}
+
+export default App;
+```
+
+- Explanation:
+
+  - **State Management**: The `themeMode` state determines whether the theme is light or dark.
+  - **Functions**: `lightTheme` and `darkTheme` are functions to switch the theme.
+  - **Effect Hook**: `useEffect` updates the HTML element's class based on the selected theme, ensuring the UI reflects the theme change.
+  - **Provider Usage**: `ThemeProvider` wraps the app and passes the themeMode, `lightTheme`, and `darkTheme` functions to the rest of the application.
+
+- ThemeBtn
+
+```javascript
+import React from "react";
+import useTheme from "../contexts/theme";
+
+export default function ThemeBtn() {
+  const { themeMode, lightTheme, darkTheme } = useTheme();
+  const onChangeBtn = (e) => {
+    const darkModeStatus = e.currentTarget.checked;
+    if (darkModeStatus) {
+      darkTheme();
+    } else {
+      lightTheme();
+    }
+  };
+  return (
+    <label className="relative inline-flex items-center cursor-pointer">
+      <input
+        type="checkbox"
+        value=""
+        className="sr-only peer"
+        onChange={onChangeBtn}
+        checked={themeMode === "dark"}
+      />
+      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+      <span className="ml-3 text-sm font-medium text-gray-900">
+        Toggle Theme
+      </span>
+    </label>
+  );
+}
+```
+
+- Explanation:
+
+  - **useTheme Hook**: Accesses the context values (`themeMode`, `lightTheme`, `darkTheme`).
+
+  - **onChangeBtn Function**: Toggles between light and dark themes based on the checkbox status.
+
+  - **Return Statement**: Renders a styled toggle switch to change the theme.
+
+- Card Component
+
+```javascript
+import React from "react";
+
+export default function Card() {
+  return (
+    <div className="w-full bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+      <a href="/">
+        <img
+          className="p-8 rounded-t-lg"
+          src="https://images.pexels.com/photos/18264716/pexels-photo-18264716/free-photo-of-man-people-laptop-internet.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+          alt="product_image1"
+        />
+      </a>
+      <div className="px-5 pb-5">
+        <a href="/">
+          <h5 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
+            Apple Watch Series 7 GPS, Aluminium Case, Starlight Sport
+          </h5>
+        </a>
+        <div className="flex items-center mt-2.5 mb-5">
+          <svg
+            className="w-4 h-4 text-yellow-300 mr-1"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+            viewBox="0 0 22 20"
+          >
+            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+          </svg>
+          <svg
+            className="w-4 h-4 text-yellow-300 mr-1"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+            viewBox="0 0 22 20"
+          >
+            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+          </svg>
+          <svg
+            className="w-4 h-4 text-yellow-300 mr-1"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+            viewBox="0 0 22 20"
+          >
+            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+          </svg>
+          <svg
+            className="w-4 h-4 text-yellow-300 mr-1"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+            viewBox="0 0 22 20"
+          >
+            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+          </svg>
+          <svg
+            className="w-4 h-4 text-gray-200 dark:text-gray-600"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+            viewBox="0 0 22 20"
+          >
+            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+          </svg>
+          <span className="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ml-3">
+            4.0
+          </span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-3xl font-bold text-gray-900 dark:text-white">
+            $599
+          </span>
+          <a
+            href="/"
+            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          >
+            Add to cart
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+- Explaination
+
+  - **Dynamic Styles**: It uses Tailwind CSS classes, and the dark mode styles are handled using conditional classes (`dark:bg-gray-800`, `dark:text-white`).
